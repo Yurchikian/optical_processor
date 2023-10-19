@@ -3,6 +3,7 @@ import cv2
 import argparse
 import numpy as np
 import imutils
+import pathlib
 
 def get_args_parser():
   parser = argparse.ArgumentParser()
@@ -17,6 +18,11 @@ def get_args_parser():
                       help='width of the resulting image')
   
   return parser
+
+
+def get_file_name(path):
+  path = pathlib.Path(path)
+  return path.name
 
 
 def read_frame(cap, frame_number):
@@ -63,7 +69,9 @@ def main(args):
   # cv2.imshow('FRAME', image)
   # cv2.waitKey(0)
 
-  cv2.imwrite('out.jpg', image)
+  output_filename = get_file_name(args.input)
+
+  cv2.imwrite('%s.jpg' % output_filename, image)
 
 
 if __name__ == '__main__':
