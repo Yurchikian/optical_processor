@@ -3,3 +3,4 @@ models/*
 !models/.keep
 *.mp4
 *.jpg
+*.mov

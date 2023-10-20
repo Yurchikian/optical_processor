@@ -14,8 +14,8 @@ def get_args_parser():
                       help='width of the image grid')
   parser.add_argument('--grid_height', '-gh', default=4, type=int,
                       help='height of the image grid')
-  parser.add_argument('--image_width', '-iw', default=2048, type=int,
-                      help='width of the resulting image')
+  parser.add_argument('--image_size', '-is', default=2048, type=int,
+                      help='longest edge of the resulting image')
   
   return parser
 
@@ -41,8 +41,15 @@ def main(args):
   print("Total frames = ", total_frames)
 
   total_keyframes = args.grid_width * args.grid_height
-  single_width = args.image_width // args.grid_width
 
+  single_shape = [None, None]
+  frame_width, frame_height = (cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+  if frame_height > frame_width:
+    single_shape[1] = args.image_size // args.grid_height
+  else:
+    single_shape[0] = args.image_size // args.grid_width
+  
   image = np.empty((0))
 
   for i in range(args.grid_height):
@@ -54,7 +61,7 @@ def main(args):
       frame_index = math.floor((total_frames - 1) / (total_keyframes - 1) * keyframe_index)
       frame = read_frame(cap, frame_index)
 
-      resized_frame = imutils.resize(frame, width=single_width)
+      resized_frame = imutils.resize(frame, width=single_shape[0], height=single_shape[1])
 
       if row.any():
         row = np.concatenate([row, resized_frame], axis=1)
